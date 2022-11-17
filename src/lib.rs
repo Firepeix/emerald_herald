@@ -1,7 +1,6 @@
-use std::path::PathBuf;
-use color_eyre::Result;
-use gateway::Method;
-use rocket::Route;
+use axum::{Router};
+use color_eyre::{Result};
+use gateway::{request::ProxyRequest};
 use tracing::error;
 
 mod log;
@@ -13,12 +12,12 @@ pub fn install() -> Result<()> {
     Ok(())
 }
 
-pub fn routes() -> Vec<Route> {
-    ebisu::routes()
+pub fn routes() -> Router {
+    ebisu::router()
 }
 
-pub async fn route_to(endpoint: &str, path: PathBuf, method: Method) {
-    if let Err(report) = gateway::route_to(endpoint, path, method).await {
+pub async fn route_to(endpoint: &str, request: ProxyRequest) {
+    if let Err(report) = gateway::route_to(endpoint, request).await {
         error!("{}", report.to_string())
     }
 }

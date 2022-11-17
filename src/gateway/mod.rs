@@ -1,37 +1,37 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, collections::HashMap};
+use axum::extract::Query;
 use color_eyre::{Result, eyre::eyre};
-use reqwest::Response;
-use rocket::http::Status;
+use reqwest::{Response, Method};
 
-use self::responder::ProxiedResponder;
+use self::{response::ProxyResponse, request::ProxyRequest};
 
-pub mod responder;
+pub mod request;
+pub mod response;
 
-pub enum Method {
-    Get
+pub async fn route_to(endpoint: &str, request: ProxyRequest) -> Result<ProxyResponse> {
+    route(to_url(endpoint, request.path.clone())?, request).await
 }
 
-
-pub async fn route_to(endpoint: &str, path: PathBuf, method: Method) -> Result<ProxiedResponder> {
-    let url = to_url(endpoint, path)?;
-    let response = match method {
-        Method::Get => route_with_get(url).await
-    };
-    // TODO Adicionar wrap de retornar não importa o resultado
-    Ok(response.unwrap())
+pub async fn route(url: String, request: ProxyRequest) -> Result<ProxyResponse> {
+    let response = reqwest::Client::new()
+        .request(request.method, url)
+        .headers(request.headers)
+        .body(request.body)
+        .query(&map_query(request.query))
+        .send()
+        .await?;
+     proxy(response).await
 }
 
-pub async fn route_with_get(url: String) -> Result<ProxiedResponder> {
-    let response = reqwest::get(url)
-    .await?;
-
-    proxy(response).await
+fn map_query(query: Query<HashMap<String, String>>) -> HashMap<String, String> {
+    query.0
 }
 
-pub async fn proxy(response: Response) -> Result<ProxiedResponder> {
+pub async fn proxy(response: Response) -> Result<ProxyResponse> {
     let status = &response.status();
-    let body = response.text().await?;
-    Ok(ProxiedResponder::new(body, Status::new(status.as_u16())))
+    let headers = response.headers().clone();
+    let body = &response.text().await?;
+    Ok(ProxyResponse::new(body.clone(), status.into(), headers))
 }
 
 fn to_url(endpoint: &str, path: PathBuf) -> Result<String> {
