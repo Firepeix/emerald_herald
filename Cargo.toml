@@ -10,5 +10,6 @@ axum = "0.5.17"
 tokio = { version = "1.21.2", features = ["full"] }
 color-eyre = { version = "0.5", default-features = false }
 tracing = "0.1"
+tower = "0.4.13"
 tracing-subscriber = { version = "0.2", features = ["fmt", "json"] }
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }

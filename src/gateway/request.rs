@@ -6,6 +6,7 @@ use axum::{http::HeaderMap, body::Bytes, extract::Query, http::StatusCode};
 
 use super::Method;
 
+#[derive(Clone)]
 pub struct ProxyRequest{
     pub path: PathBuf,
     pub method: Method,

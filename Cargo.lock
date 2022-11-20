@@ -243,6 +243,7 @@ dependencies = [
  "color-eyre",
  "reqwest",
  "tokio",
+ "tower",
  "tracing",
  "tracing-subscriber",
 ]
