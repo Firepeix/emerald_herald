@@ -18,11 +18,11 @@ pub fn install() -> Result<State> {
 }
 
 pub fn routes(state: Arc<State>) -> Result<Router> {
-    state.apps()
-        .iter()
-        .map(|app| routing::router(Arc::new(app.clone())))
-        .reduce(|router: Router, router_b: Router| router.merge(router_b))
-        .ok_or(eyre!("Não foi possivel merger as rotas"))
+    Ok(state.apps()
+    .iter()
+    .map(|app| routing::router(Arc::new(app.clone())))
+    .reduce(|router: Router, router_b: Router| router.merge(router_b))
+    .unwrap_or_default())
 }
 
 pub async fn route_to(endpoint: &str, request: ProxyRequest) {

@@ -25,13 +25,13 @@ async fn redirect(
         body,
         query
     };
-    log(path, &request);
+    log(state.domain(), path, &request);
     gateway::route_to(state.endpoint(), request).await.unwrap()
 }
 
-fn log(path: String, request: &ProxyRequest) {
+fn log(application: String, path: String, request: &ProxyRequest) {
     let method = &request.method.to_string();
-    info!(path, method, "New Request")
+    info!(application, path, method, "New Request")
 }
 
 pub fn router(app: Arc<Application>) -> Router {

@@ -242,6 +242,8 @@ dependencies = [
  "axum",
  "color-eyre",
  "reqwest",
+ "serde",
+ "serde_json",
  "tokio",
  "tower",
  "tracing",
