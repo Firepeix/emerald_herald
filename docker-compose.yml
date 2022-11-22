@@ -1,0 +1,15 @@
+version: '3.0'
+
+services:
+  emerald_herald:
+    container_name: emerald_herald
+    restart: unless-stopped
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./storage/:/storage
