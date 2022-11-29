@@ -170,8 +170,6 @@ impl<S: Subscriber + for<'a> tracing_subscriber::registry::LookupSpan<'a>> Layer
         // without the arbitrary_precision feature u128 values are not supported,
         // but u64 is still more than enough for our purposes
         let elapsed_milliseconds: u64 = {
-            use std::convert::TryInto;
-
             elapsed_milliseconds.try_into().unwrap_or_default()
         };
 

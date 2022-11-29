@@ -1,5 +1,5 @@
 use tracing::Level;
-use tracing_subscriber::{FmtSubscriber, Registry};
+use tracing_subscriber::{Registry};
 use color_eyre::Result;
 use tracing_subscriber::layer::SubscriberExt;
 use crate::log::{format::FormattingLayer, storage::JsonStorageLayer};

@@ -1,14 +1,14 @@
-use std::{path::PathBuf, collections::HashMap, sync::Arc};
+use std::{path::PathBuf, collections::HashMap};
 
 use axum::{
     routing::{get, MethodRouter},
     http::HeaderMap,
     response::IntoResponse,
-    Router, extract::{Path, Query}, body::Bytes, Extension,
+    Router, extract::{Path, Query}, body::Bytes,
 };
 use tracing::info;
 
-use crate::{gateway::{self, request::{ProxyRequest, ExtractMethod}, guard::Guardian}, management::{State}, applications::Application};
+use crate::{gateway::{self, request::{ProxyRequest, ExtractMethod}, guard::Guardian}, applications::Application};
 
 async fn redirect(
     ExtractMethod(method): ExtractMethod, 

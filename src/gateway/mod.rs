@@ -1,4 +1,4 @@
-use std::{path::PathBuf, collections::HashMap, sync::Arc};
+use std::{path::PathBuf, collections::HashMap};
 use axum::extract::Query;
 use color_eyre::{Result, eyre::eyre};
 use reqwest::{Response, Method};

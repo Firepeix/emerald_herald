@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use axum::{Router};
-use color_eyre::{Result, eyre::eyre};
-use gateway::{request::ProxyRequest};
+use color_eyre::{Result};
+
 use management::{State};
-use tracing::error;
+
 
 mod log;
 mod routing;
