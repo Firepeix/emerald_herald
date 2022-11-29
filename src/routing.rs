@@ -8,7 +8,7 @@ use axum::{
 };
 use tracing::info;
 
-use crate::{gateway::{self, request::{ProxyRequest, ExtractMethod}}, management::{State}, applications::Application};
+use crate::{gateway::{self, request::{ProxyRequest, ExtractMethod}, guard::Guardian}, management::{State}, applications::Application};
 
 async fn redirect(
     ExtractMethod(method): ExtractMethod, 
@@ -16,7 +16,8 @@ async fn redirect(
     query: Query<HashMap<String, String>>, 
     Path(path): Path<String>, 
     headers: HeaderMap,
-    state: Arc<Application>
+    state: Application,
+    guardian: Guardian
 ) -> impl IntoResponse {
     let request = ProxyRequest {
         path: PathBuf::from(&path),
@@ -26,7 +27,7 @@ async fn redirect(
         query
     };
     log(state.domain(), path, &request);
-    gateway::route_to(state.endpoint(), request).await.unwrap()
+    gateway::route_to(state.endpoint(), request, guardian).await.unwrap()
 }
 
 fn log(application: String, path: String, request: &ProxyRequest) {
@@ -34,12 +35,12 @@ fn log(application: String, path: String, request: &ProxyRequest) {
     info!(application, path, method, "New Request")
 }
 
-pub fn router(app: Arc<Application>) -> Router {
+pub fn router(app: Application, guardian: Guardian) -> Router {
     let path = format!("/{}/*path", app.domain());
-    Router::new().route(&path, default_routes(app))
+    Router::new().route(&path, default_routes(app, guardian))
 }
 
-fn default_routes(app: Arc<Application>) -> MethodRouter {
+fn default_routes(app: Application, guardian: Guardian) -> MethodRouter {
     let service =  {
         move |
         method, 
@@ -47,7 +48,7 @@ fn default_routes(app: Arc<Application>) -> MethodRouter {
         body, 
         query, 
         headers
-        |  redirect(method, path, body, query, headers, app)
+        |  redirect(method, path, body, query, headers, app, guardian)
     };
 
      get(service.clone())

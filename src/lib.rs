@@ -11,6 +11,7 @@ mod routing;
 mod gateway;
 mod management;
 mod applications;
+mod date;
 
 pub fn install() -> Result<State> {
     log::install()?;
@@ -20,13 +21,13 @@ pub fn install() -> Result<State> {
 pub fn routes(state: Arc<State>) -> Result<Router> {
     Ok(state.apps()
     .iter()
-    .map(|app| routing::router(Arc::new(app.clone())))
+    .map(|app| routing::router(app.clone(), state.guardian().clone()))
     .reduce(|router: Router, router_b: Router| router.merge(router_b))
     .unwrap_or_default())
 }
 
-pub async fn route_to(endpoint: &str, request: ProxyRequest) {
-    if let Err(report) = gateway::route_to(endpoint, request).await {
-        error!("{}", report.to_string())
-    }
-}
+//pub async fn route_to(endpoint: &str, request: ProxyRequest) {
+//    if let Err(report) = gateway::route_to(endpoint, request).await {
+//        error!("{}", report.to_string())
+//    }
+//}

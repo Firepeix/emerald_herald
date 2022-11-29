@@ -1,14 +1,20 @@
-use std::{path::PathBuf, collections::HashMap};
+use std::{path::PathBuf, collections::HashMap, sync::Arc};
 use axum::extract::Query;
 use color_eyre::{Result, eyre::eyre};
 use reqwest::{Response, Method};
 
-use self::{response::ProxyResponse, request::ProxyRequest};
+use self::{response::ProxyResponse, request::ProxyRequest, guard::Guardian};
 
 pub mod request;
 pub mod response;
+pub(crate) mod guard;
 
-pub async fn route_to(endpoint: &str, request: ProxyRequest) -> Result<ProxyResponse> {
+pub async fn route_to(endpoint: &str, request: ProxyRequest, guardian: Guardian) -> Result<ProxyResponse> {
+    let token = request.headers.get("Authorization").map(|h| h.to_str().expect("Authorization ser um UTF-8 valido"));
+    if let Some(response) = guardian.guard(token).await {
+        return Ok(response);
+    }
+
     route(to_url(endpoint, request.path.clone())?, request).await
 }
 
