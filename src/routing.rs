@@ -57,5 +57,6 @@ fn default_routes(app: Application, guardian: Guardian) -> MethodRouter {
     .delete(service.clone())
     .head(service.clone())
     .trace(service.clone())
+    .options(service.clone())
     .patch(service)
 }
