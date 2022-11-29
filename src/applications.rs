@@ -1,14 +1,9 @@
-use std::{path::PathBuf, collections::HashMap, sync::Arc, slice::Iter};
+use std::{slice::Iter};
 
-use axum::{
-    routing::{get, MethodRouter},
-    http::HeaderMap,
-    response::IntoResponse,
-    Router, extract::{Path, Query}, body::Bytes, Extension,
-};
-use tracing::info;
 
-use crate::{gateway::{self, request::{ProxyRequest, ExtractMethod}}, management::{State}};
+
+
+
 
 #[derive(Clone)]
 pub struct Application {
