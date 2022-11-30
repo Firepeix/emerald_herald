@@ -42,7 +42,7 @@ pub async fn proxy(response: Response) -> Result<ProxyResponse> {
     Ok(ProxyResponse::new(body.clone(), status.into(), headers))
 }
 
-fn to_url(endpoint: &str, path: PathBuf) -> Result<String> {
+pub fn to_url(endpoint: &str, path: PathBuf) -> Result<String> {
     let path_url = path.to_str().ok_or(eyre!("Não foi possivel encontrar caminho"))?.to_string();
-    Ok(format!("{endpoint}/{path_url}"))
+    Ok(format!("{endpoint}{path_url}"))
 }

@@ -26,14 +26,14 @@ async fn redirect(
         body,
         query
     };
-    log(state.domain(), path, &request);
+
+    let url =  gateway::to_url(state.endpoint(), PathBuf::from(&path)).unwrap_or_else(|_| "".to_string());
+
+    info!(application = state.domain(), path, url, method = &request.method.to_string(), "New Request");
+
     gateway::route_to(state.endpoint(), request, guardian).await.unwrap()
 }
 
-fn log(application: String, path: String, request: &ProxyRequest) {
-    let method = &request.method.to_string();
-    info!(application, path, method, "New Request")
-}
 
 pub fn router(app: Application, guardian: Guardian) -> Router {
     let path = format!("/{}/*path", app.domain());
