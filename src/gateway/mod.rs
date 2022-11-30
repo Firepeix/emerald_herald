@@ -38,8 +38,8 @@ fn map_query(query: Query<HashMap<String, String>>) -> HashMap<String, String> {
 pub async fn proxy(response: Response) -> Result<ProxyResponse> {
     let status = &response.status();
     let headers = response.headers().clone();
-    let body = &response.text().await?;
-    Ok(ProxyResponse::new(body.clone(), status.into(), headers))
+    let body = &response.bytes().await?;
+    Ok(ProxyResponse::proxy(body.clone(), status.into(), headers))
 }
 
 pub fn to_url(endpoint: &str, path: PathBuf) -> Result<String> {
