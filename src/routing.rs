@@ -24,7 +24,8 @@ async fn redirect(
         method,
         headers,
         body,
-        query
+        query,
+        application: state.clone()
     };
 
     let url =  gateway::to_url(state.endpoint(), PathBuf::from(&path)).unwrap_or_else(|_| "".to_string());

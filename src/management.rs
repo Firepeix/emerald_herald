@@ -45,23 +45,19 @@ fn read_env(env_name: &str) -> String {
     }
 }
 
-fn decode_env(applications: String) -> Vec<HashMap<String, String>> {
+fn decode_env(applications: String) -> Applications {
     match serde_json::from_str(&applications) {
         Ok(decoded) => decoded,
         Err(error) => {
             warn!(applications, "Não foi possivel deserializar env APPLICATIONS error = {}", error);
-            vec![]
+            Applications(vec![])
         }
     }
 }
 
-fn create_state(apps: Vec<HashMap<String, String>>, guardian_url: String) -> State {
+fn create_state(apps: Applications, guardian_url: String) -> State {
     State {
-        applications: Applications(
-            apps.iter()
-            .map(|map| Application::new(map["name"].clone(), map["url"].clone()))
-            .collect()
-        ),
+        applications: apps,
         guardian: Guardian::new(guardian_url)
     }
 }

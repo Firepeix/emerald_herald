@@ -10,7 +10,7 @@ pub mod response;
 pub(crate) mod guard;
 
 pub async fn route_to(endpoint: &str, request: ProxyRequest, guardian: Guardian) -> Result<ProxyResponse> {
-    if Method::OPTIONS != request.method {
+    if request.should_guard() {
         let token = request.headers.get("Authorization").map(|h| h.to_str().expect("Authorization ser um UTF-8 valido"));
         if let Some(response) = guardian.guard(token).await {
             return Ok(response);
