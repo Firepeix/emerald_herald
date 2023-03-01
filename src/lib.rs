@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{Router};
+use axum::{Router, routing::get};
 use color_eyre::{Result};
 
 use management::{State};
@@ -23,11 +23,11 @@ pub fn routes(state: Arc<State>) -> Result<Router> {
     .iter()
     .map(|app| routing::router(app.clone(), state.guardian().clone()))
     .reduce(|router: Router, router_b: Router| router.merge(router_b))
-    .unwrap_or_default())
+    .unwrap_or_default()
+    .merge(emerald_routes()))
 }
 
-//pub async fn route_to(endpoint: &str, request: ProxyRequest) {
-//    if let Err(report) = gateway::route_to(endpoint, request).await {
-//        error!("{}", report.to_string())
-//    }
-//}
+fn emerald_routes() -> Router {
+    Router::new()
+     .route("/health", get( || async { "up" }))
+}
