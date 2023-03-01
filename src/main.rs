@@ -12,7 +12,7 @@ async fn serve() {
     let routes = emerald_herald::routes(state.clone()).expect("Não foi possivel criar rotas!");
     let app = Router::new().merge(routes).layer(Extension(state));
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
     
     tracing::info!("listening on {}", addr);
     
